@@ -1,0 +1,56 @@
+#importation of library
+
+import numpy as np
+
+#exemple for a network of 4 entries to 2 neurals
+
+
+x1_input = input("Entrez valeur pour x1 :")
+x2_input = input("Entrez valeur pour x2 :")
+
+def convert_to_float(a):
+    """
+    input : 
+    - variable
+    Return :
+    - variable in float
+    Do :
+    - Try to convert the variable in float, if not possible, display error
+    """
+    try:
+        return float(a)
+    except ValueError:
+        print("Vous n'avez pas saisi un nombre.")
+    else:
+        print("Erreur inconnue")
+
+def sigmoid(z):
+    """The sigmoid function."""
+    return 1.0/(1.0+np.exp(-z))
+
+x1 = convert_to_float(x1_input)
+x2 = convert_to_float(x2_input)
+
+x = np.array([[1], [x1], [x2]]) # create a list of entries
+weights_layer_one = np.array([[-10, 20, 20],[-30, 20, 20]]) # create a list of weights (first one is bias)
+
+#use for debug only
+#print("x[n]=", x)
+#print("weights_layer_one=", weights_layer_one)
+
+z = np.dot(weights_layer_one,x)
+print("z=",z)
+
+z[0,0]=round(sigmoid(z[0,0]))
+z[1,0]=round(sigmoid(z[1,0]))
+
+print("z=",z)
+
+#end layer 1
+
+#start layer 2
+z_output_and_bias = np.array([[1], [z[0,0]], [z[1,0]]])
+print("input layer 2",z_output_and_bias)
+weights_layer_two = np.array([[-20, 30, -200]])
+output_neural_network = int(round(sigmoid(int(np.dot(weights_layer_two, z_output_and_bias)))))
+print("output neuronal",output_neural_network)
