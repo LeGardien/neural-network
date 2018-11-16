@@ -1,56 +1,57 @@
-#importation of library
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Nov  9 18:19:43 2018
 
+@author: matta
+"""
+
+#importation des librairies
 import numpy as np
 
-#exemple for a network of 4 entries to 2 neurals
+#création des variables
+exected_output = [0., 1., 1., 0.]
 
+layer_1 = [[0., 0., 1., 1.],
+           [0., 1., 0., 1.]]
 
-x1_input = input("Entrez valeur pour x1 :")
-x2_input = input("Entrez valeur pour x2 :")
+bias_layer_1 = [-10., -30]
+bias_layer_2 = [-20.]
 
-def convert_to_float(a):
-    """
-    input : 
-    - variable
-    Return :
-    - variable in float
-    Do :
-    - Try to convert the variable in float, if not possible, display error
-    """
-    try:
-        return float(a)
-    except ValueError:
-        print("Vous n'avez pas saisi un nombre.")
-    else:
-        print("Erreur inconnue")
+weight_layer_1 = [[20., 20.],
+                   [20., 20.]]
+weight_layer_2 = [[30., -30.]]
 
+#création des fonctions
 def sigmoid(z):
-    """The sigmoid function."""
     return 1.0/(1.0+np.exp(-z))
 
-x1 = convert_to_float(x1_input)
-x2 = convert_to_float(x2_input)
+def calculate_pd_error_wrt_output(actual_output, target_output):
+    return -(target_output - actual_output)
 
-x = np.array([[1], [x1], [x2]]) # create a list of entries
-weights_layer_one = np.array([[-10, 20, 20],[-30, 20, 20]]) # create a list of weights (first one is bias)
+def remove_bias(matrice, bias):
+    """
+    Input : matrix, vector of bias
+    Output : matrix
+    Do : remove the umpteenth bias to the umpteenth ligne 
+    of the matrix
+    """
+    len_b = len(bias) #calcul la longeur de la liste des bias
+    for i in range(len_b):
+        matrice[i,:] += bias[i] #enleve le iéme bias à la ligne i de la matrice
+    return matrice
 
-#use for debug only
-#print("x[n]=", x)
-#print("weights_layer_one=", weights_layer_one)
+def cost(out, target):
+    len_target = len(target)
+    cost = 0
+    for i in range(len_target):
+        cost += (target[i] - out[0, i])**2
+    return 1/len_target * cost
+    
 
-z = np.dot(weights_layer_one,x)
-print("z=",z)
-
-z[0,0]=round(sigmoid(z[0,0]))
-z[1,0]=round(sigmoid(z[1,0]))
-
-print("z=",z)
-
-#end layer 1
-
-#start layer 2
-z_output_and_bias = np.array([[1], [z[0,0]], [z[1,0]]])
-print("input layer 2",z_output_and_bias)
-weights_layer_two = np.array([[-20, 30, -200]])
-output_neural_network = int(round(sigmoid(int(np.dot(weights_layer_two, z_output_and_bias)))))
-print("output neuronal",output_neural_network)
+#corp programme
+layer_2 = sigmoid(remove_bias(np.dot(weight_layer_1, layer_1), bias_layer_1))
+print(layer_2)
+layer_3 = sigmoid(remove_bias(np.dot(weight_layer_2, layer_2), bias_layer_2))
+print(layer_3)
+cost = cost(layer_3, exected_output)
+print(cost)
