@@ -7,26 +7,35 @@ Created on Fri Nov  9 18:19:43 2018
 
 #importation des librairies
 import numpy as np
-
+from pylab import *
+import random 
+atchoum = random.randrange(0,50)
+print(atchoum)
 #création des variables
 exected_output = [0., 1., 1., 0.]
-
 layer_1 = [[0., 0., 1., 1.],
            [0., 1., 0., 1.]]
 
 bias_layer_1 = [-10., -30]
 bias_layer_2 = [-20.]
 
-weight_layer_1 = [[20., 20.],
-                   [20., 20.]]
-weight_layer_2 = [[30., -30.]]
+weight_layer_1 = array([[20., 20.],
+                        [20., 20.]])
+weight_layer_2 = array([[1, -30.]])
+print(weight_layer_2[0,0])
 
 #création des fonctions
 def sigmoid(z):
     return 1.0/(1.0+np.exp(-z))
 
-def calculate_pd_error_wrt_output(actual_output, target_output):
-    return -(target_output - actual_output)
+def calculate_pd_e1_output(actual_output, target_output):
+    return actual_output - target_output
+
+def calculate_pd_out_net(out):
+    return out*(1-out)
+
+def calculate_pd_net_w(out):
+    return out
 
 def remove_bias(matrice, bias):
     """
@@ -40,7 +49,7 @@ def remove_bias(matrice, bias):
         matrice[i,:] += bias[i] #enleve le iéme bias à la ligne i de la matrice
     return matrice
 
-def cost(out, target):
+def costa(out, target):
     len_target = len(target)
     cost = 0
     for i in range(len_target):
@@ -49,9 +58,18 @@ def cost(out, target):
     
 
 #corp programme
-layer_2 = sigmoid(remove_bias(np.dot(weight_layer_1, layer_1), bias_layer_1))
-print(layer_2)
-layer_3 = sigmoid(remove_bias(np.dot(weight_layer_2, layer_2), bias_layer_2))
-print(layer_3)
-cost = cost(layer_3, exected_output)
-print(cost)
+for i in range(100):
+    epsi = zeros(100)
+    layer_2 = sigmoid(remove_bias(dot(weight_layer_1, layer_1), bias_layer_1))
+    print(layer_2)
+    layer_3 = sigmoid(remove_bias(dot(weight_layer_2, layer_2), bias_layer_2))
+    print(layer_3)
+    cost = costa(layer_3, exected_output)
+    print(cost)
+    epsi[i] = 10 * calculate_pd_e1_output(layer_3[0,2], exected_output[2]) * calculate_pd_out_net(layer_3[0,2]) * calculate_pd_net_w(layer_3[0,2])
+    print(epsi[i])
+    weight_layer_2[0,0] -= epsi[i]
+    print(weight_layer_2[0,0])
+    input("appyer")
+
+plot(epsi)
